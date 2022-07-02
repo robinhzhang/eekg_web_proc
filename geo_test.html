@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=tvm7mKPtGAPjPyu2RU4TO7382csGPpLN"></script>
+
+    <title>Document</title>
+</head>
+<body>
+    <div id="l-map" style="border-radius:5px"></div>
+</body>
+<script>
+    var map = new BMap.Map("l-map")
+    map.centerAndZoom('北京市',10);
+    map.enableScrollWheelZoom();
+    var mapStyle={  style : "midnight" }
+    map.setMapStyle(mapStyle);
+    $.ajax({
+                    url: "https://s3.z100.vip:8942/api/v1/kg",
+                    type: "POST",
+                    async: false,
+                    contentType : 'application/json;charset=utf-8', //设置请求头信息
+                    data: JSON.stringify(''),
+
+                    success: function(data){
+                        console.log("---------------------")
+                        console.log(data)
+                        console.log('+++++++++++++++++++')
+                        //data = JSON.parse(JSON.stringify(data));
+                    },
+                    error: function(res){
+                        alert(res.responseText);
+
+                    }
+                });
+    $.ajax({
+                url: "https://s3.z100.vip:8942/api/v1/kg_geo",
+                type: "POST",
+                async: false,
+                contentType : 'application/json;charset=utf-8', //设置请求头信息
+                data: JSON.stringify(''),
+
+                success: function(data){
+                    console.log("---------------------")
+                    console.log(data)
+                    
+
+
+
+                },
+                error: function(res){
+                    alert(res.responseText);
+
+                }
+                });
+</script>
+</html>

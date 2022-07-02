@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/shards.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script crossorigin="anonymous"
+    integrity="sha512-pSyYzOKCLD2xoGM1GwkeHbdXgMRVsSqQaaUoHskx/HF09POwvow2VfVEdARIYwdeFLbu+2FCOTRYuiyeGxXkEg=="
+    src="https://lib.baomitu.com/vue/2.6.14/vue.js"></script>
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.0.0/dist/echarts.js"></script>
+
+
+</head>
+<body>
+<div id="app">
+    <!-- Navbars -->
+    <div id="navbars" class="my-n1">
+
+
+        <div class="example">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                <img src="images/demo/icon.svg" alt="Example Navbar 1" class="mr-2" height="30">
+                <a class="navbar-brand" href="#">生态环境领域知识服务工具</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-1" aria-controls="navbarNavDropdown-1"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown-1">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">首页
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/label.html">语义标注</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/ner_re.html">信息抽取</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/show_qa.html">知识应用</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/article.html">文献查询</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">联系我们</a>
+                        </li>
+
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-facebook"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-github"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+        </div>
+    </div>
+
+    <div id="forms" class="container mb-0">
+        <div class="section-title col-lg-10 col-md-10 ml-auto mr-auto">
+            <h3 class="mb-4">生态环境文献检索查询</h3>
+            <p>本模块基于抓取的文献数据，可支持相关科研人员进行生态环境领域文献搜索与查看
+            </p>
+
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <form>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+
+                                <input type="text" class="form-control" id="4" placeholder="请输入关键词" style="display: inline-block;width: 90%"v-model="question">
+                                <input type="button" style="display: inline-block" value="检索" class="btn btn-primary" @click="get_answer(question)">
+
+
+
+                            </div>
+
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+
+            <h5 class="mb-4">文献列表</h5>
+        </div>
+
+        <!-- Form Controls - Simple Forms: Default / Using Icons (Seamless) -->
+        <div class="example col-lg-10 col-md-10 ml-auto mr-auto">
+
+            <table class="table table-striped table-responsive-md">
+                <template v-for="(item,index) in articlelist">
+                    <tr v-if="index == 0">
+
+                            <th>题目</th>
+                            <th>作者</th>
+                            <th>时间</th>
+                            <th>全文链接</th>
+
+                    </tr>
+                    <tr>
+                        <td v-text="item.title" style="font-weight: bold"></td>
+                        <td v-text="item.author"></td>
+                        <td v-text="item.time"></td>
+                        <td >
+                            <button class="btn btn-outline-primary btn-sm" @click="open_url(item.url)">点击查看全文</button>
+
+                        </td>
+                    </tr>
+
+                </template>
+            </table>
+            <div style="text-align: center">
+                <button class="btn btn-outline-primary btn-sm" v-show="page>0" @click="front_page()">上一页</button>
+                <button class="btn btn-outline-primary btn-sm" v-show="page<=251" @click="next_page()">下一页</button>
+                <input type="text" class="form-control-sm" id="form1-name" placeholder="请输入页数" style="display: inline-block;width: 10%"v-model="page">
+                <input class="btn btn-outline-primary btn-sm" type="button" style="display: inline-block" value="跳转" class="btn btn-primary" @click="jump_page()">
+
+            </div>
+
+
+
+
+
+
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+
+    var app = new Vue({
+        //el:'#app',
+        el:'#app',
+        data:{
+            articlelist: [
+
+            ],
+            device_fault:[{name:"ss",num:"ss"},{name:"ss",num:"ss"}],
+            all_articles :[],
+            page:0,
+            question:""
+
+        },
+        methods:{
+            to_top:function(){
+                document.body.scrollTop = document.documentElement.scrollTop = 0;
+            },
+            next_page:function (){
+                this.page = this.page + 1
+                this.fetch_article()
+                this.to_top()
+            },
+            front_page:function (){
+                this.page = this.page - 1
+                this.fetch_article()
+                this.to_top()
+            },
+            jump_page:function (){
+                this.fetch_article()
+                this.to_top()
+            },
+            open_url:function (url){
+                window.location = url
+            },
+            get_answer(question){
+                if(this.question == ""){
+                    alert("请输入检索关键字！")
+                    return
+                }
+            },
+            fetch_article:function (){
+                var that = this
+                
+                $.ajax({
+                    url: "https://s3.z100.vip:8942/api/v1/article",
+                    type: "POST",
+                    async: false,
+                    contentType : 'application/json;charset=utf-8', //设置请求头信息
+                    data: JSON.stringify({
+                        from:this.page*20
+                    }),
+
+                    success: function(data){
+                        console.log("---------------------")
+                        console.log(data)
+                        //this.list_split(data)
+                        //console.log(this.all_articles)
+                        that.articlelist = []
+                        for (var i = 0;i<data['hits']['hits'].length;i++){
+                            that.articlelist.push(
+                                {
+                                    title:data['hits']['hits'][i]['_source']['title'],
+                                    author:data['hits']['hits'][i]['_source']['authors'],
+                                    time:data['hits']['hits'][i]['_source']['pages'],
+                                    url:data['hits']['hits'][i]['_source']['url_detail']
+                                }
+                            )
+                        }
+
+
+                    },
+                    error: function(res){
+                        alert(res.responseText);
+
+                    }
+                });
+            }
+        },
+        mounted:function (){
+            this.fetch_article()
+        }
+    })
+
+
+
+</script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!--<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="js/shards.min.js"></script>
+<script src="js/demo.min.js"></script>
+</body>
+</html>

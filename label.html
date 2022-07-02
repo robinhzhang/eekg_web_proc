@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- CSS Dependencies -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/shards.css">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script crossorigin="anonymous" integrity="sha512-qRXBGtdrMm3Vdv+YXYud0bixlSfZuGz+FmD+vfXuezWYfw4m5Ov0O4liA6UAlKw2rh9MOYULxbhSFrQCsF1hgg==" src="https://lib.baomitu.com/vue/2.6.14/vue.common.dev.js"></script>  <link rel="stylesheet"
+        href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+</head>
+<body>
+<div id="app">
+
+
+  <!-- Navbars -->
+  <div id="navbars" class="my-n1">
+
+
+    <div class="example">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        <img src="images/demo/icon.svg" alt="Example Navbar 1" class="mr-2" height="30">
+        <a class="navbar-brand" href="#">生态环境领域知识服务工具</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-1" aria-controls="navbarNavDropdown-1"
+                aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown-1">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/index.html">首页</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/label.html">语义标注
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/ner_re.html">信息抽取</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/show_qa.html">知识应用</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/article.html">知识可视化</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/index.html">联系我们</a>
+            </li>
+            
+          </ul>
+
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-twitter"></i>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-facebook"></i>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-linkedin"></i>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-github"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-1 col-md-1 col-sm-1 ">
+    </div>
+    <div class="col-lg-10 col-md-10 col-sm-10">
+      <div class="card" >
+
+        <div class="card-body">
+          <h4 class="card-title">待标注的文本</h4>
+          <p class="card-text" id="paragraph">{{paragraph}}</p>
+          <div class="row">
+            <div class="col-lg-4 col-md-8 col-sm-12">
+              <div class="row">
+                <div class="col-lg-3">
+                  <span class="badge mr-3 badge-primary">用户名</span>
+                </div>
+                <div class="col-lg-8">
+                  <fieldset style="width: 150px">
+                    <input v-model="user" placeholder="输入用户名开始标注">
+                  </fieldset>
+                </div>
+              </div>
+              <div class="row" style="margin-top: 10px">
+
+                <div class="col-lg-3">
+                  <a href="#" class="btn btn-primary" @click="getJoke" id="get_one">下一条</a>
+                </div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-3">
+                  <a href="#" class="btn btn-primary" @click="sendLabelEntity()">标注完成</a>
+                </div>
+                <div class="col-lg-2"></div>
+              </div>
+
+
+
+
+            </div>
+            <div class="col-lg-4 col-md-8 col-sm-12">
+              <div class="row">
+                <div class="col-lg-3">
+                  <span class="badge mr-3 badge-primary">实体类型</span>
+                </div>
+                <div class="col-lg-8">
+                  <fieldset style="width: 200px">
+                    <div class="sel01">
+                      <select v-model="selectClassEndT" @change="selectType($event)" class="custom-select w-100">
+                        <option value="NONE">请选择实体类型</option>
+                        <option v-for="(options,id) in selectTypeData" :key="id" :value="options.id">
+                          {{options.title}}
+                        </option>
+                      </select>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+              <div class="row" style="margin-top: 10px;display:none;" >
+                <div class="col-lg-3">
+                  <span class="badge mr-3 badge-primary">空间类别</span>
+                </div>
+                <div class="col-lg-8">
+                  <fieldset style="width: 200px">
+                    <div class="sel01">
+                      <select v-model="selectClassEndG" @change="selectGeoType($event)" class="custom-select w-100">
+                        <option value="NONE">请选择空间类型</option>
+                        <option v-for="(options,id) in selectGeoData" :key="id" :value="options.id">
+                          {{options.title}}
+                        </option>
+                      </select>
+                    </div>
+                  </fieldset>
+                </div>
+              </div >
+              <div class="row" style="margin-top: 10px">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-2">
+                  <a href="javascript:void(0)" class="btn btn-primary" @click="setEntity()">标注实体</a>
+                </div>
+              </div>
+
+
+
+            </div>
+            <div class="col-lg-4 col-md-8 col-sm-12">
+              <div class="row" >
+                <div class="col-lg-3">
+
+                  <span class="badge mr-3 badge-primary">头实体</span>
+
+                </div>
+                <div class="col-lg-3">
+
+
+                  <span class="badge mr-3 badge-outline-secondary">{{head_text}}</span>
+
+                </div>
+                <div class="col-lg-3">
+
+
+                  <span class="badge mr-3 badge-primary">尾实体</span>
+
+                </div>
+                <div class="col-lg-3">
+
+
+                  <span class="badge mr-3 badge-outline-secondary">{{tail_text}}</span>
+                </div>
+
+              </div>
+              <div class="row" style="margin-top: 10px">
+                <div class="col-lg-2">
+                  <span class="badge mr-3 badge-primary">关系</span>
+                </div>
+                <div class="col-lg-8">
+                  <div style="width: 200px">
+
+                    <div class="sel01">
+                      <select v-model="selectClassEnd" @change="selectClass($event)" class="custom-select w-100" style="display: inline-block">
+                        <option value="NONE">请选择关系</option>
+                        <option v-for="(options,id) in selectClassData" :key="id" :value="options.id">
+                          {{options.title}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="margin-top: 10px">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-2">
+                  <a href="javascript:void(0)" class="btn btn-primary" @click="setRelation()">标注关系</a>
+                </div>
+              </div>
+
+
+
+            </div>
+          </div>
+
+
+
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 ">
+    </div>
+  </div>
+  <div class="row" style="margin-top: 2%">
+    <div class="col-lg-1 col-md-1 col-sm-1 ">
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6">
+      <div class="card">
+
+        <div class="card-body">
+          <h4 class="card-title">已经标注的实体</h4>
+          <ul>
+            <li style="list-style-type: None;padding-top: 5px">
+              <div class="btn-group-sm" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-outline-info" >文字</button>
+                <button type="button" class="btn btn-outline-light" >类别</button>
+                <button type="button" class="btn btn-outline-success" >设为头实体</button>
+                <button type="button" class="btn btn-outline-success" >设为尾实体</button>
+                <button type="button" class="btn btn-outline-danger" >Delete</button>
+              </div>
+            </li>
+            <li v-for="(item,index) in entity" style="list-style-type: None;padding-top: 5px">
+              <div class="btn-group-sm" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-info" >{{index +1}} . {{item.content}}</button>
+                <button type="button" class="btn btn-light" >{{item.type}}</button>
+                <button type="button" class="btn btn-success" @click="setHeadNode(index)">设为头实体</button>
+                <button type="button" class="btn btn-success" @click="setTailNode(index)">设为尾实体</button>
+                <button type="button" class="btn btn-danger" @click="remove(index)">Delete</button>
+              </div>
+
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4">
+      <div class="card">
+
+        <div class="card-body">
+          <h4 class="card-title">已经标注的关系</h4>
+          <ul>
+            <li style="list-style-type: None;padding-top: 5px">
+              <div class="btn-group-sm" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-outline-success" >头实体</button>
+                <button type="button" class="btn btn-outline-light" >关系</button>
+
+                <button type="button" class="btn btn-outline-success" >尾实体</button>
+                <button type="button" class="btn btn-outline-danger" >Delete</button>
+              </div>
+            </li>
+            <li v-for="(item,index) in relations" style="list-style-type: None;margin-top: 5px">
+              <div class="btn-group-sm" role="group" aria-label="Basic example">
+
+
+                <button type="button" class="btn btn-success" @click="setHeadNode(index)">{{item.head_text}}</button>
+                <button type="button" class="btn btn-light" >{{item.relation}}</button>
+                <button type="button" class="btn btn-success" @click="setTailNode(index)">{{item.tail_text}}</button>
+                <button type="button" class="btn btn-danger" @click="remove_r(index)">
+                  <i class="fa fa-remove mr-1"></i>Delete</button>
+
+              </div>
+
+            </li>
+          </ul>
+          <div >
+            <div class="row" >
+              <div class="col-lg-3">
+
+                <span class="badge mr-3 badge-primary">头实体</span>
+
+              </div>
+              <div class="col-lg-3">
+
+
+                <span class="badge mr-3 badge-outline-secondary">{{head_text}}</span>
+
+              </div>
+              <div class="col-lg-3">
+
+
+                <span class="badge mr-3 badge-primary">尾实体</span>
+
+              </div>
+              <div class="col-lg-3">
+
+
+                <span class="badge mr-3 badge-outline-secondary">{{tail_text}}</span>
+              </div>
+
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <div class="col-lg-2">
+                <span class="badge mr-3 badge-primary">关系</span>
+              </div>
+              <div class="col-lg-8">
+                <div style="width: 200px">
+
+                  <div class="sel01">
+                    <select v-model="selectClassEnd" @change="selectClass($event)" class="custom-select w-100" style="display: inline-block">
+                      <option value="NONE">请选择关系</option>
+                      <option v-for="(options,id) in selectClassData" :key="id" :value="options.id">
+                        {{options.title}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <div class="col-lg-3"></div>
+              <div class="col-lg-2">
+                <a href="javascript:void(0)" class="btn btn-primary" @click="setRelation()">标注关系</a>
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-1 col-md-1 col-sm-1 ">
+    </div>
+  </div>
+  <button id="messagebox" @click="inputEntiy()"></button>
+</div>
+
+
+<script>
+
+
+
+  var app = new Vue({
+    //el:'#app',
+    el:'#app',
+    data:{
+      user:"",
+      paragraph:"p",
+      paragraph_id:"s",
+      paragraph_backup:"p",
+      entity:[],
+      entity_not_show:[],
+      relations:[],
+      relations_not_show:[],
+      entity_type:"type",
+      entity_type_text:"text",
+      geo_type:"type",
+      geo_text:"text",
+      relation:"todo",
+      relation_text:"text",
+      head_id:"id",
+      head_text:"text",
+      tail_id:"id",
+      tail_text:"text",
+      selectClassData:[ //类别选择数据或者从后台获取数据
+        {id:1,title:"包含"},
+        {id:2,title:"含有属性"},
+        {id:3,title:"产生、排放、生成"},
+        {id:4,title:"分析、研究"},
+        {id:5,title: "影响、产生作用、促进、抑制"},
+        {id:6,title:"居住、栖息、存在于"},
+        {id:7,title: "相关（正相关、负相关）"},
+        {id:8,title: "含有污染物"},
+        {id:9,title:"具有（功能）、存在（现象）"}
+      ],
+      selectTypeData:[ //类别选择数据或者从后台获取数据
+        {id:1,title:"污染源"},
+        {id:2,title:"污染物"},
+        {id:3,title:"自然生态环境风险、其他风险"},
+        {id:4,title:"生物、生物群落"},
+        {id:5,title:"环境要素、栖息地"},
+        {id:6,title:"分析方法"},
+        {id:7,title:"时间"},
+        {id:8,title:"空间信息"},
+        {id:9,title:"生态环境功能"},
+        {id:10,title:"生态环境功能、现象、过程"},
+        {id:11,title:"人类活动"},
+        {id:12,title:"评价指标"},
+        {id:13,title:"量化指标"},
+        {id:14,title: "数据、参数"}
+      ],selectGeoData:[ //类别选择数据或者从后台获取数据
+        {id:1,title:"点"},
+        {id:2,title:"线"},
+        {id:3,title:"面"},
+        {id:4,title:"其他"}
+      ],
+      selectClassEnd:"NONE",//类别默认选择
+      selectClassEndT:"NONE",//类别默认选择
+      selectClassEndG:"NONE",//类别默认选择
+      select_class_id:""//类别id提交报名需要
+
+
+    },
+    methods:{
+
+      getJoke:function(){
+        var that = this;
+        axios.get("http://115.156.92.42:5000/api/v1/paragraph").then(function(response){
+          console.log(response.data['paragraph'])
+          that.paragraph = response.data['paragraph']
+          that.paragraph_backup = response.data['paragraph']
+          that.paragraph_id = response.data['id']
+          document.getElementById("paragraph").innerHTML = response.data['paragraph']
+          
+          this.relations =[]
+          this.entity = []
+          this.relations_not_show = []
+          this.entity_not_show = []
+        },function(err){
+          console.log(err)
+          
+        })
+      },
+      setEntity:function(){
+        if(this.user == ""){
+          alert("请输入用户名以开始标注")
+          return
+        }
+        if(this.entity_type_text =='text'){
+          alert("未选择实体类型，请检查！")
+          return
+        }
+        txt = window.getSelection();
+        // 获取到当行选中的文本开始索引和结束索引
+        beginTxt = txt.anchorOffset;
+        endTxt = txt.focusOffset;
+        if(beginTxt == endTxt){
+          alert("未选择标注实体，请选择！！！")
+          return
+        }
+        console.log(beginTxt)
+        console.log(endTxt)
+        content = txt.toString()
+        console.log(content)
+        let all_index = this.getAllIndex(content, this.paragraph_backup);
+        for (var i in all_index){
+          console.log(all_index[i])
+          this.entity_not_show.push({"start":parseInt(all_index[i][0]),"end":parseInt(all_index[i][1]), "content":content, "type":this.entity_type_text,"id":getUuid(),"user":this.user,"geo":this.geo_text,"paragraph":this.paragraph_backup,"paragraph_id":this.paragraph_id})
+
+        }
+        this.entity.push({"start":parseInt(all_index[0][0]),"end":parseInt(all_index[0][1]), "content":content, "type":this.entity_type_text,"id":getUuid(),"user":this.user,"geo":this.geo_text,"paragraph":this.paragraph_backup,"paragraph_id":this.paragraph_id})
+        this.keyLight("paragraph",content)
+        console.log(this.entity)
+
+      },
+      keyLight(id, key, bgColor){
+        var oDiv = document.getElementById(id),
+                sText = oDiv.innerHTML,
+                bgColor = bgColor || "orange",
+                sKey = "<span style='background-color: orange'>"+key+"</span>",
+                num = -1,
+                rStr = new RegExp(key, "g"),
+                rHtml = new RegExp("\<.*?\>","ig"), //匹配html元素
+                aHtml = sText.match(rHtml); //存放html元素的数组
+        sText = sText.replace(rHtml, '{~}');  //替换html标签
+        sText = sText.replace(rStr,sKey); //替换key
+        sText = sText.replace(/{~}/g,function(){  //恢复html标签
+          num++;
+          return aHtml[num];
+        });
+
+        oDiv.innerHTML = sText;
+      },
+      getAllIndex: function(entity,paragraph){
+        var index = paragraph.indexOf(entity)
+        var num = 0
+        var indexs = []
+        label = 0
+        while (label != -1){
+          console.log(label,label+entity.length)
+          num++
+          indexs.push([label,label+entity.length])
+          label = paragraph.indexOf(entity,label+1)
+        }
+        console.log('出现的次数' + num)
+        return indexs
+        return indexs
+      },
+      remove:function(index){
+        //this.entity.splice(index,1)
+
+        for (var i in this.entity_not_show){
+          if(this.entity[label]['content'] == this.entity_not_show[i]['content']){
+            this.entity_not_show.splice(i)
+            console.log(i)
+          }
+        }
+        this.entity.splice(label,1)
+        console.log(this.entity)
+        console.log(this.entity_not_show)
+      },
+      remove_r:function(index){
+        for (var i in this.relations_not_show){
+          if(this.relations[label]['head_text'] == this.relations_not_show[i]['head_text'] && this.relations[label]['tail_text'] == this.relations_not_show[i]['tail_text'] ){
+            this.relations_not_show.splice(i)
+            console.log(i)
+          }
+        }
+        this.relations.splice(label,1)
+        console.log(this.relations_not_show)
+        console.log(this.relations_not_show)
+
+
+      },
+      test:function (){
+        alert("sssdsdsdsw")
+      },
+      setRelation:function (){
+        
+        if(this.user == ""){
+          alert("请输入用户名以开始标注！")
+          return
+        }
+        if(this.head_text == "text" ||this.tail_id == "text" || this.relation_text == "text" ){
+          alert("未选择头实体、尾实体或者关系，请检查！")
+          return
+        }
+        for (i in this.entity_not_show){
+          for (j in this.entity_not_show){
+            if (this.head_text == this.entity_not_show[i]['content'] && this.tail_text == this.entity_not_show[j]['content']){
+              this.relations_not_show.push({"head":this.entity_not_show[i]['id'],"relation":this.relation_text,"tail":this.entity_not_show[j]['id'],"user":this.user,"id":getUuid(),"head_text":this.head_text,"tail_text":this.tail_text,"paragraph_id":this.paragraph_id})
+
+            }
+          }
+        }
+        this.relations.push({"head":this.head_id,"relation":this.relation_text,"tail":this.tail_id,"user":this.user,"id":getUuid(),"head_text":this.head_text,"tail_text":this.tail_text,"paragraph_id":this.paragraph_id})
+
+        console.log(this.relations_not_show)
+      },
+      setHeadNode:function (index){
+        this.head_id = this.entity[index]['id']
+        this.head_text = this.entity[index]['content']
+      },
+      setTailNode:function (index){
+        this.tail_id = this.entity[index]['id']
+        this.tail_text = this.entity[index]['content']
+      },
+      //关系选中
+      selectClass:function (event){
+        this.select_class_id = event.target.value; //获取option对应的value值 select_class_id是后台约定的提交数据的名称
+        console.log(this.select_class_id)
+        this.relation = this.select_class_id
+        console.log(this.select_class_id)
+
+        this.relation_text = this.selectClassData[parseInt(this.select_class_id)-1]['title']
+      },
+      //类别选中
+      selectType:function (event){
+        this.select_class_id = event.target.value; //获取option对应的value值 select_class_id是后台约定的提交数据的名称
+        console.log(this.select_class_id)
+        this.entity_type = this.select_class_id
+        this.entity_type_text = this.selectTypeData[parseInt(this.select_class_id)-1]['title']
+      },
+      //空间类别选中
+      selectGeoType:function (event){
+        this.select_class_id = event.target.value; //获取option对应的value值 select_class_id是后台约定的提交数据的名称
+        console.log(this.select_class_id)
+        this.geo_type = this.select_class_id
+        this.geo_text = this.selectGeoData[parseInt(this.select_class_id)-1]['title']
+      },
+      sendLabelEntity:function (){
+
+        var that = this;
+        $.ajax({
+          url: "http://s3.z100.vip:8942/api/v1/label_entity",
+          type: "POST",
+          async: false,
+          contentType : 'application/json;charset=utf-8', //设置请求头信息
+//            dataType:"json",
+          data: JSON.stringify(this.entity_not_show),    //将Json对象序列化成Json字符串，JSON.stringify()原生态方法
+//            data: $.toJSON(customerArray),            //将Json对象序列化成Json字符串，toJSON()需要引用jquery.json.min.js
+          success: function(data){
+            
+          },
+          error: function(res){
+            alert(res.responseText);
+            
+          }
+        });
+        $.ajax({
+          url: "http://115.156.92.42:5000/api/v1/label_relation",
+          type: "POST",
+          async: false,
+          contentType : 'application/json;charset=utf-8', //设置请求头信息
+//            dataType:"json",
+          data: JSON.stringify(this.relations_not_show),    //将Json对象序列化成Json字符串，JSON.stringify()原生态方法
+//            data: $.toJSON(customerArray),            //将Json对象序列化成Json字符串，toJSON()需要引用jquery.json.min.js
+          success: function(data){
+            
+          },
+          error: function(res){
+            alert(res.responseText);
+            
+          }
+        });
+        this.getJoke()
+        this.relations =[]
+        this.entity = []
+        this.relations_not_show = []
+        this.entity_not_show = []
+      }
+    }
+  })
+  document.getElementById("get_one").click()
+  function getUuid () {
+    var s = [];
+    var hexDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for (var i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+    }
+    s[14] = "4"
+    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1)
+    s[8] = s[13] = s[18] = s[23] = "-"
+    let uuid = s.join("")
+    return uuid
+  }
+  function test(){
+    console.log("sssss")
+    document.getElementById("messagebox").click()
+  }
+
+
+
+
+  function getS(){
+    txt = window.getSelection();
+    // 获取到当行选中的文本开始索引和结束索引
+    beginTxt = txt.anchorOffset;
+    endTxt = txt.focusOffset;
+    console.log(beginTxt)
+    console.log(endTxt)
+    content = txt.toString()
+    console.log(content)
+  }
+
+
+</script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!--<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="js/shards.min.js"></script>
+<script src="js/demo.min.js"></script>
+</body>
+</html>

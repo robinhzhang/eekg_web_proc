@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/shards.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script crossorigin="anonymous"
+        integrity="sha512-pSyYzOKCLD2xoGM1GwkeHbdXgMRVsSqQaaUoHskx/HF09POwvow2VfVEdARIYwdeFLbu+2FCOTRYuiyeGxXkEg=="
+        src="https://lib.baomitu.com/vue/2.6.14/vue.js"></script>
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+
+
+    <!-- Navbars -->
+    <div id="navbars" class="my-n1">
+
+
+        <div class="example">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                <img src="images/demo/icon.svg" alt="Example Navbar 1" class="mr-2" height="30">
+                <a class="navbar-brand" href="#">生态环境领域知识服务工具</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-1" aria-controls="navbarNavDropdown-1"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown-1">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">首页
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/label.html">语义标注</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/ner_re.html">信息抽取</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/show_qa.html">知识应用</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/article.html">知识可视化</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">联系我们</a>
+                        </li>
+
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-facebook"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-github"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+        </div>
+    </div>
+
+    <div id="forms" class="container mb-5">
+        <div class="section-title col-lg-10 col-md-10 ml-auto mr-auto">
+            <h3 class="mb-4">生态环境实体信息与关系抽取</h3>
+            <p>这一部分可以将输入的一段文本中，识别表示生态环境要素的文本实体，并且他们之间的关系。此部分包含的技术包括命名实体识别和实体关系提取，
+                您可以在下面的输入框中输入一段文本，点击识别按钮即可。
+            </p>
+        </div>
+
+        <!-- Form Controls - Simple Forms: Default / Using Icons (Seamless) -->
+        <div class="example col-lg-810 col-md-10 ml-auto mr-auto">
+            <h5>待识别文本输入</h5>
+
+            <!-- Form Controls: Simple Forms -->
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <form>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+
+                                <input type="text" class="form-control" id="form1-name" placeholder="请输入文本" style="display: inline-block;width: 70%"v-model="input_p">
+                                <input type="button" style="display: inline-block" value="实体提取" class="btn btn-primary" @click="getLabels(input_p)">
+                                <input type="button" style="display: inline-block" value="关系提取" class="btn btn-primary" @click="get_relations()">
+
+                            </div>
+
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Form Controls: Using Icons -->
+            <h5 class="mb-4">环境要素识别结果如下</h5>
+            <p v-html="p"></p>
+            <div class="example col-lg-810 col-md-10 ml-auto mr-auto">
+                <span class="badge mr-3 badge-danger">污染物</span>
+                <span class="badge mr-3 badge-warning">污染源</span>
+                <span class="badge mr-3 badge-success">环境要素</span>
+                <span class="badge mr-3 badge-info">生物及群落</span>
+                <span class="badge mr-3 badge-outline-secondary">空间信息</span>
+                <span class="badge mr-3 badge-outline-secondary">属性信息</span>
+                <span class="badge mr-3 badge-dark">处理手段</span>
+                <span class="badge mr-3 badge-outline-secondary">时间信息</span>
+            </div>
+            <h5 style="margin-top: 3%">关系抽取结果</h5>
+            <div class="card">
+                <!-- 为ECharts准备一个具备大小的Dom -->
+                <div class = "col-md-12">
+                    <div class="">
+                        <header class="">
+                            关系图 :
+                        </header>
+                        <div class = "">
+                            <div id="graph" style="width: 100%;height:600px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+        </div>
+
+
+
+    </div>
+</div>
+
+
+<script>
+
+
+
+    var app = new Vue({
+        //el:'#app',
+        el:'#app',
+        data:{
+            p : "",
+            input_p : "",
+            entity_list : [],
+            echarts_data : [],
+            echarts_links :[],
+        },
+        methods:{
+            getLabels:function (p){
+                if(this.input_p == ""){
+                    alert("请输入待提取语句后继续！")
+                    return
+                }
+                this.p = this.input_p
+                var that = this
+                $.ajax({
+                    url: "http://115.156.92.42:5000/api/v1/ner",
+                    type: "POST",
+                    async: false,
+                    contentType : 'application/json;charset=utf-8', //设置请求头信息
+//            dataType:"json",
+                    data: JSON.stringify({"p":p}),    //将Json对象序列化成Json字符串，JSON.stringify()原生态方法
+//            data: $.toJSON(customerArray),            //将Json对象序列化成Json字符串，toJSON()需要引用jquery.json.min.js
+                    success: function(data){
+                        //that.p = that.p + data
+                        console.log(data)
+                        that.entity_list = data
+                        that.keyLight(data)
+                    },
+                    error: function(res){
+                        alert(res.responseText);
+
+                    }
+                });
+
+            },
+            keyLight(list){
+                str = this.p
+                list.sort(function (a,b){
+                    return a[0]-b[0]
+                })
+                console.log(list)
+                for (var i = list.length - 1; i >= 0; i--) {
+                    var [startNum, endNum, type, word] = list[i] // todo：增加具体字符
+
+                    if (type == "环境要素、栖息地") {
+                        str = str.substring(0, startNum) + '<span class="badge mr-3 badge-success">' + str.substring(startNum, endNum) + '</span>' + str.substring(endNum)
+                    }else if (type == "污染物") {
+                        str = str.substring(0, startNum) + '<span class="badge mr-3 badge-danger">' + str.substring(startNum, endNum) + '</span>' + str.substring(endNum)
+                    }else if (type == "污染源") {
+                        str = str.substring(0, startNum) + '<span class="badge mr-3 badge-warning">' + str.substring(startNum, endNum) + '</span>' + str.substring(endNum)
+                    }else if (type == "生物、生物群落") {
+                        str = str.substring(0, startNum) + '<span class="badge mr-3 badge-info">' + str.substring(startNum, endNum) + '</span>' + str.substring(endNum)
+                    }else if (type == "分析方法") {
+                        str = str.substring(0, startNum) + '<span class="badge mr-3 badge-dark">' + str.substring(startNum, endNum) + '</span>' + str.substring(endNum)
+                    }else  {
+                        str = str.substring(0, startNum) + '<span class="badge mr-3 badge-outline-secondary">' + str.substring(startNum, endNum) + '</span>' + str.substring(endNum)
+                    }
+                }
+                this.p = str
+
+            },
+
+            generate_relation_req:function (){
+                var r_req = {}
+                r_req['p'] = this.input_p
+                r_req['entities'] = this.entity_list
+                return r_req
+            },
+
+            get_relations:function (){
+                var req_data = this.generate_relation_req()
+                if(this.entity_list.length == 0){
+                    alert("请先进行实体抽取在进行关系抽取！！")
+                    return
+                }
+                var that = this
+                console.log(req_data)
+                $.ajax({
+                    url: "http://115.156.92.42:5000/api/v1/re",
+                    type: "POST",
+                    async: false,
+                    contentType : 'application/json;charset=utf-8', //设置请求头信息
+//            dataType:"json",
+                    data: JSON.stringify(req_data),    //将Json对象序列化成Json字符串，JSON.stringify()原生态方法
+//            data: $.toJSON(customerArray),            //将Json对象序列化成Json字符串，toJSON()需要引用jquery.json.min.js
+                    success: function(data){
+                        console.log("---------------------")
+                        console.log(data)
+                        console.log(data['data'])
+                        console.log('+++++++++++++++++++')
+                        data = JSON.parse(JSON.stringify(data));
+
+                        that.echarts_data = data['data']
+                        that.echarts_links = data['links']
+
+                        that.set_chart(data['data'],data['links'])
+                    },
+                    error: function(res){
+                        alert(res.responseText);
+
+                    }
+                });
+            },
+            set_chart:function (data,links){
+                var myChart = echarts.init(document.getElementById('graph'));
+                console.log("init echart")
+
+                console.log(data)
+                console.log(links)
+                option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {},
+                    animationDurationUpdate: 1500,
+                    animationEasingUpdate: 'quinticInOut',
+                    label: {
+                        normal: {
+                            show: true,
+                            textStyle: {
+                                fontSize: 12
+                            },
+                        }
+                    },
+                    legend: {
+                        x: "center",
+                        show: true
+                    },
+                    series: [
+
+                        {
+                            type: 'graph',
+                            layout: 'force',
+                            symbolSize: 30,
+                            focusNodeAdjacency: true,
+                            roam: true,
+                            edgeSymbol: ['none', 'arrow'],
+                            categories: [{
+                                name: '环境栖息地',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#009800",
+                                    }
+                                }
+                            }, {
+                                name: '污染物',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#ed1941",
+                                    }
+                                }
+                            }, {
+                                name: '污染源',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#fdb933",
+                                    }
+                                }
+                            }, {
+                                name: '时间',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#4f5555",
+                                    }
+                                }
+                            }, {
+                                name: '空间信息',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#4f5555",
+                                    }
+                                }
+                            }, {
+                                name: '生物群落',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#33a3dc",
+                                    }
+                                }
+                            }, {
+                                name: '量化、评价指标',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#4f5555",
+                                    }
+                                }
+                            }, {
+                                name: '生态现象、过程',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#130c0e",
+                                    }
+                                }
+                            }, {
+                                name: '人类活动',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#130c0e",
+                                    }
+                                }
+                            }, {
+                                name: '分析方法',
+                                itemStyle: {
+                                    normal: {
+                                        color: "#130c0e",
+                                    }
+                                }
+                            }],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 14,
+                                    },
+                                }
+                            },
+                            force: {
+                                repulsion: 1000
+                            },
+                            edgeSymbolSize: [4, 50],
+                            edgeLabel: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 5
+                                    },
+                                    formatter: "{c}"
+                                }
+                            },
+                            data: data,
+                            links: links,
+                            lineStyle: {
+                                normal: {
+                                    opacity: 0.9,
+                                    width: 0.5,
+                                    curveness: 0.3,
+                                    color:"#C0C0C0",
+                                }
+                            }
+                        }
+                    ]
+                };
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+
+            }
+        }
+    })
+
+
+
+</script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!--<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>-->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="js/shards.min.js"></script>
+<script src="js/demo.min.js"></script>
+</body>
+</html>

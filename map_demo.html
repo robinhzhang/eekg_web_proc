@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Title</title>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=tvm7mKPtGAPjPyu2RU4TO7382csGPpLN"></script>
+    <style type="text/css">
+        html{height:100%}
+        body{height:100%;margin:0px;padding:0px}
+        #l-map{height:80%}
+    </style>
+</head>
+
+<body>
+    <div id="l-map" style="height: 100px;width: 100px"></div>
+    <div class="layout">
+        <input id="value" value="青山湖区长春村" type="text">
+    　　 <input type="submit" onclick="pd()" value="定位">
+    </div>
+
+</body>
+<script>
+    //初始化地图
+    var value='';var map = new BMap.Map("l-map");
+    map.centerAndZoom('北京市',10);
+    map.enableScrollWheelZoom();
+
+    //定位区域，小地名，使用本地检索方法
+    var dw=function(item){
+        //value=document.getElementById('value').value;
+        var local = new BMap.LocalSearch(map, {
+            renderOptions:{map: map}
+        });
+
+        local.setMarkersSetCallback(function(pois){
+            //map.clearOverlays();//清除所有覆盖物后，在叠加第一个点
+            var marker = new BMap.Marker(pois[0].point);
+            map.addOverlay(marker);
+        })
+
+        local.search(item);
+        map.clearOverlays();
+
+    }
+
+    //获取边界
+    function getBoundary(item){//获取边界
+        var bdary = new BMap.Boundary();
+        bdary.get(item, function(rs){       //获取行政区域
+            //map.clearOverlays();        //清除地图覆盖物
+            var count = rs.boundaries.length; //行政区域的点有多少个
+            for(var i = 0; i < count; i++){
+                var ply = new BMap.Polygon(rs.boundaries[i], {
+                    strokeWeight: 1,
+                    strokeColor: "#ff0000"
+                }); //建立多边形覆盖物
+                map.addOverlay(ply);  //添加覆盖物
+                map.setViewport(ply.getPath());    //调整视野
+            }
+        });
+    }
+
+    //正则表达式，满足条件后调用
+    var patter=/['省'|'市'|'区'|'县']$/;
+    var pd=function(){
+        map.clearOverlays();
+        value=document.getElementById('value').value;
+        items = value.split(';')
+        for(var i = 0;i<items.length;i++){
+           var item = items[i]
+            if(patter.test(item)==true){//关键字结尾是省市县区就调用下面方法
+                getBoundary(item);
+                dw(item);
+                if(/社区|小区$/.test(item)==true){//因为区后面结尾，会有小区和社区，即做了一个字方法
+                    getBoundary(item);
+                    dw(item);
+                }
+            }else{//关键字结尾没有省市县区结尾就调用此方法
+                getBoundary(item);
+                dw(item);
+            }
+        }
+        sleep(zooms,3000);
+
+
+    }
+    var zooms=function (){
+        console.log("sss")
+        map.centerAndZoom('武汉市',5);
+        map.enableScrollWheelZoom();
+    }
+
+    // setTimeout
+    let fun = () => console.log('time out');
+    let sleep = function(fun,time){
+        setTimeout(()=>{
+            fun();
+        },time);
+    }
+
+
+
+
+</script>
+</html>
