@@ -85,12 +85,14 @@
 
     </div>
   </div>
+  <!--  第一大块-->
   <div class="row">
+    <!--  左边空白-->
     <div class="col-lg-1 col-md-1 col-sm-1 ">
     </div>
+    <!--中间主体    -->
     <div class="col-lg-10 col-md-10 col-sm-10">
       <div class="card" >
-
         <div class="card-body">
           <h4 class="card-title">待标注的文本</h4>
           <p class="card-text" id="paragraph">{{paragraph}}</p>
@@ -117,10 +119,6 @@
                 </div>
                 <div class="col-lg-2"></div>
               </div>
-
-
-
-
             </div>
             <div class="col-lg-4 col-md-8 col-sm-12">
               <div class="row">
@@ -222,16 +220,14 @@
 
             </div>
           </div>
-
-
-
-
         </div>
       </div>
     </div>
+    <!--  右边空白-->
     <div class="col-lg-1 col-md-1 col-sm-1 ">
     </div>
   </div>
+<!-- 第二大块-->
   <div class="row" style="margin-top: 2%">
     <div class="col-lg-1 col-md-1 col-sm-1 ">
     </div>
@@ -363,28 +359,28 @@
 
 
   var app = new Vue({
-    //el:'#app',
+    // vue元素
     el:'#app',
     data:{
-      user:"",
-      paragraph:"p",
-      paragraph_id:"s",
-      paragraph_backup:"p",
-      entity:[],
-      entity_not_show:[],
-      relations:[],
-      relations_not_show:[],
-      entity_type:"type",
-      entity_type_text:"text",
-      geo_type:"type",
-      geo_text:"text",
-      relation:"todo",
-      relation_text:"text",
-      head_id:"id",
-      head_text:"text",
-      tail_id:"id",
-      tail_text:"text",
-      selectClassData:[ //类别选择数据或者从后台获取数据
+      user:"",//用户名
+      paragraph:"p",//段落
+      paragraph_id:"s",//段落id
+      paragraph_backup:"p",//段落副本
+      entity:[],//前端显示实体列表
+      entity_not_show:[],//提交到后台的实体列表
+      relations:[],//前端显示的关系列表
+      relations_not_show:[],//提交到后台的关系列表
+      entity_type:"type",//实体类别id
+      entity_type_text:"text",//实体类别文本
+      geo_type:"type",//空间类型id
+      geo_text:"text",//空间类型文本
+      relation:"todo",//关系类型id
+      relation_text:"text",//关系类型文本
+      head_id:"id",//头实体id
+      head_text:"text",//头实体文本
+      tail_id:"id",//尾实体id
+      tail_text:"text",//尾实体文本
+      selectClassData:[ //类别选择数据或者从后台获取数据，所有关系的类别
         {id:1,title:"包含"},
         {id:2,title:"含有属性"},
         {id:3,title:"产生、排放、生成"},
@@ -395,7 +391,7 @@
         {id:8,title: "含有污染物"},
         {id:9,title:"具有（功能）、存在（现象）"}
       ],
-      selectTypeData:[ //类别选择数据或者从后台获取数据
+      selectTypeData:[ //类别选择数据或者从后台获取数据，所有实体的类别
         {id:1,title:"污染源"},
         {id:2,title:"污染物"},
         {id:3,title:"自然生态环境风险、其他风险"},
@@ -410,7 +406,7 @@
         {id:12,title:"评价指标"},
         {id:13,title:"量化指标"},
         {id:14,title: "数据、参数"}
-      ],selectGeoData:[ //类别选择数据或者从后台获取数据
+      ],selectGeoData:[ //类别选择数据或者从后台获取数据，所有空间类型的类别
         {id:1,title:"点"},
         {id:2,title:"线"},
         {id:3,title:"面"},
@@ -419,12 +415,12 @@
       selectClassEnd:"NONE",//类别默认选择
       selectClassEndT:"NONE",//类别默认选择
       selectClassEndG:"NONE",//类别默认选择
-      select_class_id:""//类别id提交报名需要
+      select_class_id:""//选择的类别id
 
 
     },
     methods:{
-
+      // getJoke 功能从数据库获取一段待标注文本显示到前端
       getJoke:function(){
         var that = this;
         axios.get("http://115.156.92.42:5000/api/v1/paragraph").then(function(response){
@@ -443,6 +439,7 @@
           
         })
       },
+      // setEntity 标注实体，前端选择文本点击标注实体按钮后，将实体列表在前端显示，暂存实体列表，高亮选中文本
       setEntity:function(){
         if(this.user == ""){
           alert("请输入用户名以开始标注")
@@ -475,6 +472,7 @@
         console.log(this.entity)
 
       },
+      // keyLight 高亮选中文本
       keyLight(id, key, bgColor){
         var oDiv = document.getElementById(id),
                 sText = oDiv.innerHTML,
@@ -493,6 +491,7 @@
 
         oDiv.innerHTML = sText;
       },
+      // getAllIndex 获取给定实体在段落中的下标（位置）
       getAllIndex: function(entity,paragraph){
         var index = paragraph.indexOf(entity)
         var num = 0
@@ -506,8 +505,8 @@
         }
         console.log('出现的次数' + num)
         return indexs
-        return indexs
       },
+      // remove 移除一个实体
       remove:function(index){
         //this.entity.splice(index,1)
 
@@ -521,6 +520,7 @@
         console.log(this.entity)
         console.log(this.entity_not_show)
       },
+      // remove 移除一条关系
       remove_r:function(index){
         for (var i in this.relations_not_show){
           if(this.relations[label]['head_text'] == this.relations_not_show[i]['head_text'] && this.relations[label]['tail_text'] == this.relations_not_show[i]['tail_text'] ){
@@ -537,6 +537,7 @@
       test:function (){
         alert("sssdsdsdsw")
       },
+      // setRelation 标注一条关系，这个跟setentity那个类似
       setRelation:function (){
         
         if(this.user == ""){
@@ -559,15 +560,17 @@
 
         console.log(this.relations_not_show)
       },
+      // setHeadNode 设定头实体
       setHeadNode:function (index){
         this.head_id = this.entity[index]['id']
         this.head_text = this.entity[index]['content']
       },
+      // 设定尾实体
       setTailNode:function (index){
         this.tail_id = this.entity[index]['id']
         this.tail_text = this.entity[index]['content']
       },
-      //关系选中
+      // selectClass 选择关系类型
       selectClass:function (event){
         this.select_class_id = event.target.value; //获取option对应的value值 select_class_id是后台约定的提交数据的名称
         console.log(this.select_class_id)
@@ -576,14 +579,14 @@
 
         this.relation_text = this.selectClassData[parseInt(this.select_class_id)-1]['title']
       },
-      //类别选中
+      // selectType 实体类别选中
       selectType:function (event){
         this.select_class_id = event.target.value; //获取option对应的value值 select_class_id是后台约定的提交数据的名称
         console.log(this.select_class_id)
         this.entity_type = this.select_class_id
         this.entity_type_text = this.selectTypeData[parseInt(this.select_class_id)-1]['title']
       },
-      //空间类别选中
+      //selectGeoType 空间类别选中
       selectGeoType:function (event){
         this.select_class_id = event.target.value; //获取option对应的value值 select_class_id是后台约定的提交数据的名称
         console.log(this.select_class_id)
@@ -633,7 +636,9 @@
       }
     }
   })
+  // 打开网页
   document.getElementById("get_one").click()
+  // 获取uuid
   function getUuid () {
     var s = [];
     var hexDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -646,6 +651,7 @@
     let uuid = s.join("")
     return uuid
   }
+
   function test(){
     console.log("sssss")
     document.getElementById("messagebox").click()
